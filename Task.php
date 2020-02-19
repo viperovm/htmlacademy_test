@@ -8,12 +8,14 @@ class Task
     const STATUS_ACTIVE = 'active';
     const STATUS_COMPLETED = 'completed';
     const STATUS_CANCELED = 'canceled';
+    const STATUS_FAILED = 'failed';
     const STATUS_INACTIVE = 'inactive';
 
     const ACTION_ADD = 'add';
     const ACTION_RESPOND = 'respond';
     const ACTION_CANCEL = 'cancel';
     const ACTION_COMPLETE = 'complete';
+    const ACTION_PROBLEM = 'problem';
     const ACTION_MESSAGE = 'message';
 
     private $implementer_id;
@@ -103,7 +105,8 @@ class Task
             self::STATUS_ACTIVE => 'Выполняется',
             self::STATUS_COMPLETED => 'Завершено',
             self::STATUS_CANCELED => 'Отменено',
-            self::STATUS_INACTIVE => 'Ожидание'
+            self::STATUS_INACTIVE => 'Ожидание',
+            self::STATUS_FAILED => 'Провалено'
         ];
     }
 
@@ -118,6 +121,7 @@ class Task
             self::ACTION_RESPOND => 'Откликнуться',
             self::ACTION_CANCEL => 'Отказаться',
             self::ACTION_COMPLETE => 'Завершить',
+            self::ACTION_PROBLEM => 'Возникла проблема',
             self::ACTION_MESSAGE => 'Написать сообщение'
         ];
     }
@@ -150,6 +154,14 @@ class Task
                 {
                     $this->current_status = self::STATUS_COMPLETED;
 
+                } else {
+                    echo 'действие ' . $this->current_action . ' невозможно<br>';
+                }
+                break;
+            case self::ACTION_PROBLEM:
+                if (in_array($this->current_action, $this->possible_current_actions))
+                {
+                    $this->current_status = self::STATUS_FAILED;
                 } else {
                     echo 'действие ' . $this->current_action . ' невозможно<br>';
                 }
@@ -187,13 +199,20 @@ class Task
         {
             $this->possible_current_actions = [
                 self::ACTION_COMPLETE,
-                self::ACTION_MESSAGE
+                self::ACTION_MESSAGE,
+                self::ACTION_PROBLEM
             ];
         } elseif ($this->current_status == self::STATUS_COMPLETED)
         {
             $this->possible_current_actions = [
                 self::ACTION_MESSAGE,
                 self::ACTION_ADD
+            ];
+        }elseif ($this->current_status == self::STATUS_FAILED)
+        {
+            $this->possible_current_actions = [
+                self::ACTION_MESSAGE,
+                self::ACTION_CANCEL
             ];
         } elseif ($this->current_status == self::STATUS_CANCELED || $this->current_status == self::STATUS_INACTIVE)
         {
