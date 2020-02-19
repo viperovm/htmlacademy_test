@@ -186,7 +186,6 @@ class Task
         } elseif ($this->current_status == self::STATUS_ACTIVE)
         {
             $this->possible_current_actions = [
-                self::ACTION_CANCEL,
                 self::ACTION_COMPLETE,
                 self::ACTION_MESSAGE
             ];
