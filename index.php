@@ -1,6 +1,6 @@
 <?php
 
-    require_once 'Task.php'
+require_once 'Task.php'
 
 ?>
 
@@ -14,6 +14,22 @@
     <title>Document</title>
 </head>
 <body>
+
+<?php
+
+    $task1 = new Task(133, 114);
+    echo $task1->getImplementerId() . '<br>';
+    echo $task1->getCustomerId() . '<br>';
+    echo $task1->getCurrentStatus() . '<br>';
+    print_r($task1->getPossibleCurrentActions());
+    echo '<br>';
+    $task1->setCurrentAction('message');
+    echo $task1->getCurrentStatus();
+
+
+
+
+?>
 
 </body>
 </html>
