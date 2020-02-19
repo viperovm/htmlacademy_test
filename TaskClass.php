@@ -1,7 +1,7 @@
 <?php
 
 
-class Task
+class TaskClass
 {
 
     const STATUS_NEW = 'new';
