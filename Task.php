@@ -8,12 +8,14 @@ class Task
     const STATUS_ACTIVE = 'active';
     const STATUS_COMPLETED = 'completed';
     const STATUS_CANCELED = 'canceled';
+    const STATUS_FAILED = 'failed';
     const STATUS_INACTIVE = 'inactive';
 
     const ACTION_ADD = 'add';
     const ACTION_RESPOND = 'respond';
     const ACTION_CANCEL = 'cancel';
     const ACTION_COMPLETE = 'complete';
+    const ACTION_PROBLEM = 'problem';
     const ACTION_MESSAGE = 'message';
 
     private $implementer_id;
@@ -75,6 +77,24 @@ class Task
     }
 
     /**
+     * @return mixed
+     */
+    public function getCurrentAction()
+    {
+        return $this->current_action;
+    }
+
+    /**
+     * @param mixed $current_action
+     */
+    public function setCurrentAction($current_action)
+    {
+        $this->current_action = $current_action;
+    }
+
+
+
+    /**
      * Возвращает карту статусов в виде массива
      */
 
@@ -85,7 +105,8 @@ class Task
             self::STATUS_ACTIVE => 'Выполняется',
             self::STATUS_COMPLETED => 'Завершено',
             self::STATUS_CANCELED => 'Отменено',
-            self::STATUS_INACTIVE => 'Ожидание'
+            self::STATUS_INACTIVE => 'Ожидание',
+            self::STATUS_FAILED => 'Провалено'
         ];
     }
 
@@ -100,6 +121,7 @@ class Task
             self::ACTION_RESPOND => 'Откликнуться',
             self::ACTION_CANCEL => 'Отказаться',
             self::ACTION_COMPLETE => 'Завершить',
+            self::ACTION_PROBLEM => 'Возникла проблема',
             self::ACTION_MESSAGE => 'Написать сообщение'
         ];
     }
@@ -112,16 +134,46 @@ class Task
     {
         switch ($this->current_action) {
             case self::ACTION_ADD:
-                $this->current_status = self::STATUS_NEW;
+                if (in_array($this->current_action, $this->possible_current_actions))
+                {
+                    $this->current_status = self::STATUS_NEW;
+                } else {
+                    echo 'действие ' . $this->current_action . ' невозможно<br>';
+                }
                 break;
             case self::ACTION_RESPOND:
-                $this->current_status = self::STATUS_ACTIVE;
+                if (in_array($this->current_action, $this->possible_current_actions))
+                {
+                    $this->current_status = self::STATUS_ACTIVE;
+                } else {
+                    echo 'действие ' . $this->current_action . ' невозможно<br>';
+                }
                 break;
             case self::ACTION_COMPLETE:
-                $this->current_status = self::STATUS_COMPLETED;
+                if (in_array($this->current_action, $this->possible_current_actions))
+                {
+                    $this->current_status = self::STATUS_COMPLETED;
+
+                } else {
+                    echo 'действие ' . $this->current_action . ' невозможно<br>';
+                }
+                break;
+            case self::ACTION_PROBLEM:
+                if (in_array($this->current_action, $this->possible_current_actions))
+                {
+                    $this->current_status = self::STATUS_FAILED;
+                } else {
+                    echo 'действие ' . $this->current_action . ' невозможно<br>';
+                }
                 break;
             case self::ACTION_CANCEL:
-                $this->current_status = self::STATUS_CANCELED;
+                if (in_array($this->current_action, $this->possible_current_actions))
+                {
+                    $this->current_status = self::STATUS_CANCELED;
+
+                } else {
+                    echo 'действие ' . $this->current_action . ' невозможно<br>';
+                }
                 break;
             default:
                 $this->current_status = self::STATUS_INACTIVE;
@@ -146,15 +198,21 @@ class Task
         } elseif ($this->current_status == self::STATUS_ACTIVE)
         {
             $this->possible_current_actions = [
-                self::ACTION_CANCEL,
                 self::ACTION_COMPLETE,
-                self::ACTION_MESSAGE
+                self::ACTION_MESSAGE,
+                self::ACTION_PROBLEM
             ];
         } elseif ($this->current_status == self::STATUS_COMPLETED)
         {
             $this->possible_current_actions = [
                 self::ACTION_MESSAGE,
                 self::ACTION_ADD
+            ];
+        }elseif ($this->current_status == self::STATUS_FAILED)
+        {
+            $this->possible_current_actions = [
+                self::ACTION_MESSAGE,
+                self::ACTION_CANCEL
             ];
         } elseif ($this->current_status == self::STATUS_CANCELED || $this->current_status == self::STATUS_INACTIVE)
         {
